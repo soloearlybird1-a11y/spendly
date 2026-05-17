@@ -1,0 +1,37 @@
+name: Build and Test App
+
+# 1. Trigger the workflow on pushes or pull requests to the main branch
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    # 2. Run on a fresh, cloud-hosted Linux machine
+    runs-on: ubuntu-latest
+
+    steps:
+    # 3. Pulls your code from GitHub into the virtual machine
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # 4. Sets up the Node.js environment
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' # Uses Node 20 LTS (change to your version if needed)
+        cache: 'npm'       # Caches dependencies so future builds are faster
+
+    # 5. Installs your project dependencies
+    - name: Install dependencies
+      run: npm ci
+
+    # 6. Runs your build script (cooks the app)
+    - name: Build application
+      run: npm run build --if-present
+
+    # 7. Optional: Runs your test suite if you have one
+    - name: Run tests
+      run: npm test --if-present
